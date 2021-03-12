@@ -13,6 +13,10 @@ async function initWorkout() {
         (acc, ex) => acc + ex.duration,
         0
       ),
+      totalDistance: lastWorkout.exercises.reduce(
+        (acc, ex) => acc + ex.distance,
+        0
+      ),
       numExercises: lastWorkout.exercises.length,
       ...tallyExercises(lastWorkout.exercises)
     };
@@ -29,7 +33,7 @@ function tallyExercises(exercises) {
       acc.totalWeight = (acc.totalWeight || 0) + curr.weight;
       acc.totalSets = (acc.totalSets || 0) + curr.sets;
       acc.totalReps = (acc.totalReps || 0) + curr.reps;
-    } else if (curr.type === "cardio") {
+    } else if (curr.type === "cardio" ) {
       acc.totalDistance = (acc.totalDistance || 0) + curr.distance;
     }
     return acc;
