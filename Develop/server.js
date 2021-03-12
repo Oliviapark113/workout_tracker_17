@@ -3,12 +3,13 @@
 const express = require("express");
 const logger = require("morgan");
 const mongoose = require("mongoose");
+const path = require("path")
 
 const PORT = process.env.PORT || 3000;
 
 const db = require("./models");
-const Exercise = require("./models/Exercise");
-const Workout = require("./models/Workout");
+
+
 
 const app = express();
 
@@ -24,38 +25,87 @@ mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/workout", { use
 // Routes
 
 app.get("/exercise", (req, res)=>{
- res.render("exercise")
+ res.sendFile(path.join(__dirname, 'public', 'exercise.html'))
 
 })
 
-//createWorkout
-app.post("/api/workouts", (req, res)=>{
 
-  db.Workout.find({})
-  .populate("exercise")
+app.get("/stats", (req, res)=>{
+  res.sendFile(path.join(__dirname, 'public', 'stats.html'))
+ 
+ })
+
+
+//createWorkout
+app.post("/api/workouts", ({body}, res)=>{
+  
+  const workout = new db.Workout(body);
+  db.Workout.create(workout)
   .then(dbWorkouts =>{
+    console.log(dbWorkouts)
     res.json(dbWorkouts);
   }).catch(err=>{
     res.json(err);
   })
 })
 
+//readWorkout
+app.get("/api/workouts", (req, res)=>{
+  console.log("hello")
+  db.Workout.find({})
+  // .populate("exercises")
+  .then(dbWorkouts =>{
+    console.log(dbWorkouts)
+    res.json(dbWorkouts);
+  }).catch(err=>{
+    res.json(err);
+  })
+})
 
 //addExercise
-app.put("/api/workouts/:id", ({body}, res) => {
-  // Create a new workout req.body
-  const workout = new Workout(body);
+app.put("/api/workouts/:id", ({body, params}, res) => {
+   //create exercise .. 
+  // const exercise = new db.Exercise(body)
+  const id = params.id
+  //pulled id from exercise and add into exercise on Workout model
+  // db.Exercise.create(exercise)
+  // .then(({_id}) => {
+    db.Workout.findByIdAndUpdate(id, {$push:{exercises: body }}, {new: true})
+      .then(dbWorkout => {
+        console.log(dbWorkout)
+        res.json(dbWorkout);
+      })
+      .catch(err => {
+        res.json(err)
+      })
+    
+  // })
  
-  Workout.create(workout)
-    .then(({_id}) => db.Workout.findOneAndUpdate({}, {$push:{exercise:_id}}, {new:true}))
-    .then(dbWorkout =>{
-      res.json(dbWorkout)
-    })
-    .catch(err => {
-      // If an error occurs, send the error to the client
-      res.json(err);
-    });
 });
+
+
+
+//getWorkoutsInRange
+
+app.get("/api/workouts/range", (req, res) =>{
+  //get duration of all workout 
+  db.Workout.aggregate( [
+    {
+      $addFields: {
+        totalDuration: { $sum: "$exercises.duration" } ,
+        
+      }
+    }
+ ]).then(dbWorkouts =>{
+   res.json(dbWorkouts)
+ })
+ .catch(err => {
+  res.json(err)
+})
+ 
+
+ }
+)
 
 
 // Start the server
