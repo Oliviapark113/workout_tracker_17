@@ -22,19 +22,17 @@ app.use(express.static("public"));
 
 mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/workout", { useNewUrlParser: true });
 
-// Routes
+// HTML Routes
 
 app.get("/exercise", (req, res)=>{
  res.sendFile(path.join(__dirname, 'public', 'exercise.html'))
 
 })
 
-
 app.get("/stats", (req, res)=>{
   res.sendFile(path.join(__dirname, 'public', 'stats.html'))
  
  })
-
 
 //createWorkout
 app.post("/api/workouts", ({body}, res)=>{
@@ -51,9 +49,7 @@ app.post("/api/workouts", ({body}, res)=>{
 
 //readWorkout
 app.get("/api/workouts", (req, res)=>{
-  console.log("hello")
   db.Workout.find({})
-  // .populate("exercises")
   .then(dbWorkouts =>{
     console.log(dbWorkouts)
     res.json(dbWorkouts);
@@ -64,14 +60,11 @@ app.get("/api/workouts", (req, res)=>{
 
 //addExercise
 app.put("/api/workouts/:id", ({body, params}, res) => {
-   //create exercise .. 
-  // const exercise = new db.Exercise(body)
+ 
   const id = params.id
-  //pulled id from exercise and add into exercise on Workout model
-  // db.Exercise.create(exercise)
-  // .then(({_id}) => {
+ 
     db.Workout.findByIdAndUpdate(id, {$push:{exercises: body }}, {new: true})
-      .then(dbWorkout => {
+    .then(dbWorkout => {
         console.log(dbWorkout)
         res.json(dbWorkout);
       })
@@ -79,10 +72,8 @@ app.put("/api/workouts/:id", ({body, params}, res) => {
         res.json(err)
       })
     
-  // })
  
 });
-
 
 
 //getWorkoutsInRange
@@ -97,6 +88,7 @@ app.get("/api/workouts/range", (req, res) =>{
       }
     }
  ]).then(dbWorkouts =>{
+   console.log(dbWorkouts)
    res.json(dbWorkouts)
  })
  .catch(err => {
