@@ -51,7 +51,6 @@ app.post("/api/workouts", ({body}, res)=>{
 app.get("/api/workouts", (req, res)=>{
   db.Workout.find({})
   .then(dbWorkouts =>{
-    console.log(dbWorkouts)
     res.json(dbWorkouts);
   }).catch(err=>{
     res.json(err);
