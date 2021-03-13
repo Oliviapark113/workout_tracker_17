@@ -89,7 +89,7 @@ app.get("/api/workouts/range", (req, res) =>{
     {
       $addFields: {
         totalDuration: { $sum: "$exercises.duration" } ,
-        totalDistance: {$sum: "$exercises.distance"}
+        // totalDistance: {$sum: "$exercises.distance"}
         }
     },
 
