@@ -64,11 +64,11 @@ app.get("/api/workouts", (req, res)=>{
 })
 
 //addExercise
-app.put("/api/workouts/:id", ({body, params}, res) => {
- 
+app.put("/api/workouts/:id", ({ body, params}, res) => {
+  console.log(body)
   const id = params.id
  
-    db.Workout.findByIdAndUpdate(id, {$push:{exercises: body }}, {new: true})
+    db.Workout.findByIdAndUpdate({ _id: id}, {$push:{exercises: body }}, {new: true})
     .then(dbWorkout => {
         console.log(dbWorkout)
         res.json(dbWorkout);

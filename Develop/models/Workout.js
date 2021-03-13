@@ -20,7 +20,7 @@ const WorkoutSchema = new Schema({
      trim: true
      }, 
  
- duration:{
+  duration:{
      type: Number,
      trim: true
   },
