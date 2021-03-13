@@ -28,7 +28,7 @@ Triology and North Western Bootcamp provide the front end material and Instructo
 
 
 # Website Deploy Links
-GitHub: https://github.com/Oliviapark113/workout_tracker_17/tree/main/Develop
+GitHub: https://github.com/Oliviapark113/workout_tracker_17
 
 
 Heroku: https://fathomless-fjord-12826.herokuapp.com/ 
